@@ -1,6 +1,7 @@
 void setup()
 {
   size(600,600);
+  rectMode(CORNERS); // rect command will draw rectangle based on two opposing corners
 }
 
 // initial vertex values for rectangle
@@ -31,27 +32,38 @@ float endPos;
 void draw()
 {
   background(140);
-  noStroke();
+  //noStroke();
   
   beginShape();
   
+  // draw main rectangle
   fill(255);
+  noStroke();
   vertex(vx1,vy1); // top left
   vertex(vx2,vy2); // bot left
   vertex(vx3,vy3); // bot right
   vertex(vx4,vy4); // top right
-  
+ 
   endShape();
+  
+  // draw rect outlines showing clickable edge area
+  stroke(0);
+  noFill();
+  rect(vx4-inSet, vy4, vx3+offSet, vy3); // right
+  rect(vx1-offSet, vy1, vx2+inSet, vy2); // left
   
   getEdge();
   
   if(mousePressed){
+    
     if(firstClick == false)
     {
       firstClick = true;
       tempX = mouseX;
       tempY = mouseY;
     }
+    
+    // draw rectangle showing how much pull/push the user is going to apply
     fill(50);
     quad( tempX,tempY,
           tempX,tempY+10,
@@ -68,7 +80,7 @@ void getEdge(){
        edge = "right";
      }
   } 
-  else if(mouseY > vy4 && mouseY < vy3 && mouseX > vx1-inSet && mouseX < vx1+offSet)
+  else if(mouseY > vy4 && mouseY < vy3 && mouseX > vx1-offSet && mouseX < vx1+inSet)
   {
      if(mousePressed)
      {

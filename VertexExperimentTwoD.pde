@@ -29,15 +29,17 @@ float increment;
 float startPos;
 float endPos;
 
+String lockOnEdge = "";
+
 void draw()
 {
   background(140);
-  //noStroke();
+  noStroke();
   
   beginShape();
   
   // draw main rectangle
-  fill(255);
+  fill(200);
   noStroke();
   vertex(vx1,vy1); // top left
   vertex(vx2,vy2); // bot left
@@ -52,61 +54,60 @@ void draw()
   rect(vx4-inSet, vy4, vx3+offSet, vy3); // right
   rect(vx1-offSet, vy1, vx2+inSet, vy2); // left
   
-  getEdge();
+  noStroke();
+  
+  //manipulateEdge();
   
   if(mousePressed){
     
+    // decide which edge im on 
+    String currentEdge = "";
+    if(mouseY > vy4 && mouseY < vy3 && mouseX > vx4-inSet && mouseX < vx4+offSet)
+    {
+      currentEdge = "right";
+    }
+    else if(mouseY > vy4 && mouseY < vy3 && mouseX > vx1-offSet && mouseX < vx1+inSet)
+    {
+      currentEdge = "left";
+    }
+    else if(lockOnEdge != "") //if edge can't keep up with mouse
+    {
+      currentEdge = lockOnEdge;
+    }
+    
+    // do stuff to current edge im on
+    updateEdge(currentEdge);
     if(firstClick == false)
     {
+      lockOnEdge = currentEdge;
+      
       firstClick = true;
       tempX = mouseX;
       tempY = mouseY;
     }
     
-    // draw rectangle showing how much pull/push the user is going to apply
-    fill(50);
-    quad( tempX,tempY,
-          tempX,tempY+10,
-          mouseX,tempY+10,
-          mouseX,tempY); 
   }
 }
 
-void getEdge(){
-  if(mouseY > vy4 && mouseY < vy3 && mouseX > vx4-inSet && mouseX < vx4+offSet)
+void updateEdge(String edge)
+{
+  if(edge == "right")
   {
-     if(mousePressed)
-     {
-       edge = "right";
-     }
-  } 
-  else if(mouseY > vy4 && mouseY < vy3 && mouseX > vx1-offSet && mouseX < vx1+inSet)
+    vx4 = mouseX;
+    vx3 = mouseX;
+  }
+  else if(edge == "left")
   {
-     if(mousePressed)
-     {
-       edge = "left";
-     }
-  } 
+    vx1 = mouseX;
+    vx2 = mouseX;
+  }
   
-  if(mouseR == true){
-      if(edge == "right"){
-        increment = mouseX-vx4;
-        vx4 += increment;
-        vx3 += increment;
-        edge = "";         // clears edge variable to solve problem with always having an edge selected
-      }
-      if(edge == "left"){
-        increment = mouseX-vx1;
-        vx1 += increment;
-        vx2 += increment;
-        edge = "";
-      }
-      
-      mouseR = false;
-  } 
+  edge = "";         // clears edge variable to solve problem with always having an edge selected
 }
 
-void mouseReleased(){
+void mouseReleased()
+{
   firstClick = false;
   mouseR = true;
+  lockOnEdge = "";
 }
